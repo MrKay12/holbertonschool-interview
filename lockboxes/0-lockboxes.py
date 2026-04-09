@@ -3,7 +3,7 @@
 
 
 def canUnlockAll(boxes):
-    """Retourne True si on peut ouvrir toutes les boîtes à partir de la boîte 0.
+    """Retourne True si on peut ouvrir toutes les boîtes à partir de la boîte 0
 
     Args:
         boxes (list[list[int]]): Liste des clés présentes dans chaque boîte.
