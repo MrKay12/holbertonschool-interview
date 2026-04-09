@@ -2,7 +2,7 @@
 """Vérifie si toutes les boîtes peuvent être ouvertes."""
 
 
-def Unlock(boxes):
+def canUnlockAll(boxes):
     """Retourne True si on peut ouvrir toutes les boîtes à partir de la boîte 0.
 
     Args:
