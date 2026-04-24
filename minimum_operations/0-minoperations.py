@@ -2,7 +2,7 @@
 """Minimum operations module."""
 
 
-def minimum_operations(n):
+def minOperations(n):
     """Calculate the fewest operations needed to get exactly n H chars."""
     if not isinstance(n, int) or n <= 1:
         return 0
