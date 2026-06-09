@@ -38,28 +38,28 @@ def main():
     """Read stdin and print stats every 10 valid lines or on CTRL+C."""
     total_size = 0
     status_counts = {code: 0 for code in VALID_CODES}
-    valid_lines = 0
+    line_count = 0
 
     try:
         for line in sys.stdin:
+            line_count += 1
+
             parsed = parse_line(line)
-            if parsed is None:
-                continue
+            if parsed is not None:
+                status_code, file_size = parsed
+                total_size += file_size
 
-            status_code, file_size = parsed
-            total_size += file_size
+                if status_code in status_counts:
+                    status_counts[status_code] += 1
 
-            if status_code in status_counts:
-                status_counts[status_code] += 1
-
-            valid_lines += 1
-            if valid_lines % 10 == 0:
+            if line_count % 10 == 0:
                 print_stats(total_size, status_counts)
+
+        print_stats(total_size, status_counts)
 
     except KeyboardInterrupt:
         print_stats(total_size, status_counts)
         raise
-
 
 if __name__ == "__main__":
     main()
