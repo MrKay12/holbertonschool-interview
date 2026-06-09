@@ -1,51 +1,45 @@
 #!/usr/bin/python3
-"""Log parsing script."""
+"""Log parsing module."""
 
-import re
 import sys
 
 
-VALID_CODES = (200, 301, 400, 401, 403, 404, 405, 500)
-
-PATTERN = re.compile(
-    r'^\S+ - \[.*\] "GET /projects/260 HTTP/1\.1" (\d{3}) (\d+)$'
-)
-
-
-def print_stats(total_size, status_counts):
+def print_stats(total_size, status_codes):
+    """Print total file size and status code counts."""
     print("File size: {}".format(total_size))
-    for code in VALID_CODES:
-        if status_counts.get(code, 0) > 0:
-            print("{}: {}".format(code, status_counts[code]))
+    for code in sorted(status_codes.keys()):
+        if status_codes[code] > 0:
+            print("{}: {}".format(code, status_codes[code]))
 
 
 def main():
+    """Read stdin line by line and compute metrics."""
     total_size = 0
-    status_counts = {code: 0 for code in VALID_CODES}
     line_count = 0
+    valid_codes = [200, 301, 400, 401, 403, 404, 405, 500]
+    status_codes = {code: 0 for code in valid_codes}
 
     try:
         for line in sys.stdin:
             line_count += 1
-            line = line.strip()
+            parts = line.split()
 
-            match = PATTERN.match(line)
-            if match:
-                status_code = int(match.group(1))
-                file_size = int(match.group(2))
+            try:
+                status_code = int(parts[-2])
+                file_size = int(parts[-1])
+            except (IndexError, ValueError):
+                continue
 
-                total_size += file_size
+            total_size += file_size
 
-                if status_code in status_counts:
-                    status_counts[status_code] += 1
+            if status_code in status_codes:
+                status_codes[status_code] += 1
 
             if line_count % 10 == 0:
-                print_stats(total_size, status_counts)
-
-        print_stats(total_size, status_counts)
+                print_stats(total_size, status_codes)
 
     except KeyboardInterrupt:
-        print_stats(total_size, status_counts)
+        print_stats(total_size, status_codes)
         raise
 
 
