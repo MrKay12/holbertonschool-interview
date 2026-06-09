@@ -1,41 +1,25 @@
 #!/usr/bin/python3
 """Log parsing script."""
 
+import re
 import sys
 
 
 VALID_CODES = (200, 301, 400, 401, 403, 404, 405, 500)
 
+PATTERN = re.compile(
+    r'^\S+ - \[.*\] "GET /projects/260 HTTP/1\.1" (\d{3}) (\d+)$'
+)
+
 
 def print_stats(total_size, status_counts):
-    """Print accumulated metrics."""
     print("File size: {}".format(total_size))
-    for code in sorted(status_counts):
-        if status_counts[code] > 0:
+    for code in VALID_CODES:
+        if status_counts.get(code, 0) > 0:
             print("{}: {}".format(code, status_counts[code]))
 
 
-def parse_line(line):
-    """Return status code and file size if line format is valid, else None."""
-    parts = line.split()
-
-    if len(parts) < 9:
-        return None
-
-    if parts[-5] != '"GET' or parts[-4] != "/projects/260" or parts[-3] != 'HTTP/1.1"':
-        return None
-
-    try:
-        status_code = int(parts[-2])
-        file_size = int(parts[-1])
-    except ValueError:
-        return None
-
-    return status_code, file_size
-
-
 def main():
-    """Read stdin and print stats every 10 valid lines or on CTRL+C."""
     total_size = 0
     status_counts = {code: 0 for code in VALID_CODES}
     line_count = 0
@@ -43,10 +27,13 @@ def main():
     try:
         for line in sys.stdin:
             line_count += 1
+            line = line.strip()
 
-            parsed = parse_line(line)
-            if parsed is not None:
-                status_code, file_size = parsed
+            match = PATTERN.match(line)
+            if match:
+                status_code = int(match.group(1))
+                file_size = int(match.group(2))
+
                 total_size += file_size
 
                 if status_code in status_counts:
@@ -60,6 +47,7 @@ def main():
     except KeyboardInterrupt:
         print_stats(total_size, status_counts)
         raise
+
 
 if __name__ == "__main__":
     main()
