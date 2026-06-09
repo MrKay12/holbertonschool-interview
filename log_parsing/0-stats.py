@@ -16,8 +16,8 @@ def main():
     """Read stdin line by line and compute metrics."""
     total_size = 0
     line_count = 0
-    valid_codes = [200, 301, 400, 401, 403, 404, 405, 500]
-    status_codes = {code: 0 for code in valid_codes}
+    status_codes = {200: 0, 301: 0, 400: 0, 401: 0,
+                    403: 0, 404: 0, 405: 0, 500: 0}
 
     try:
         for line in sys.stdin:
@@ -25,15 +25,16 @@ def main():
             parts = line.split()
 
             try:
-                status_code = int(parts[-2])
-                file_size = int(parts[-1])
+                total_size += int(parts[-1])
             except (IndexError, ValueError):
-                continue
+                pass
 
-            total_size += file_size
-
-            if status_code in status_codes:
-                status_codes[status_code] += 1
+            try:
+                status_code = int(parts[-2])
+                if status_code in status_codes:
+                    status_codes[status_code] += 1
+            except (IndexError, ValueError):
+                pass
 
             if line_count % 10 == 0:
                 print_stats(total_size, status_codes)
