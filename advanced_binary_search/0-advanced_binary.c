@@ -37,7 +37,7 @@ void print_subarray(int *array, size_t size)
  * @value: Value to search for
  * @offset: Starting index in the original array
  *
- * Return: Index of the first occurrence, or -1 if not found
+ * Return: First index of value, or -1 if not found
  */
 int advanced_binary_recursive(int *array, size_t size, int value,
 			      size_t offset)
@@ -51,21 +51,23 @@ int advanced_binary_recursive(int *array, size_t size, int value,
 	print_subarray(array, size);
 	mid = (size - 1) / 2;
 
-	if (array[mid] == value)
+	if (size == 1)
 	{
-		if (mid == 0)
-			return ((int)(offset + mid));
-
-		result = advanced_binary_recursive(array, mid, value, offset);
-		if (result != -1)
-			return (result);
-
-		return ((int)(offset + mid));
+		if (array[0] == value)
+			return ((int)offset);
+		return (-1);
 	}
 
-	if (array[mid] > value)
-		return (advanced_binary_recursive(array, mid + 1,
-						   value, offset));
+	if (array[mid] >= value)
+	{
+		result = advanced_binary_recursive(array, mid + 1,
+						   value, offset);
+		if (result != -1)
+			return (result);
+		if (array[mid] == value)
+			return ((int)(offset + mid));
+		return (-1);
+	}
 
 	return (advanced_binary_recursive(array + mid + 1,
 					  size - mid - 1,
@@ -78,7 +80,7 @@ int advanced_binary_recursive(int *array, size_t size, int value,
  * @size: Number of elements in the array
  * @value: Value to search for
  *
- * Return: Index of the first occurrence, or -1 if not found
+ * Return: First index of value, or -1 if not found
  */
 int advanced_binary(int *array, size_t size, int value)
 {
