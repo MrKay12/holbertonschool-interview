@@ -43,6 +43,7 @@ int advanced_binary_recursive(int *array, size_t size, int value,
 			      size_t offset)
 {
 	size_t mid;
+	int result;
 
 	if (size == 0)
 		return (-1);
@@ -52,10 +53,15 @@ int advanced_binary_recursive(int *array, size_t size, int value,
 
 	if (array[mid] == value)
 	{
-		if (mid == 0 || array[mid - 1] < value)
-			return ((int)(offset + mid));
+		if (mid == 0)
+			return ((int)offset);
 
-		return (advanced_binary_recursive(array, mid, value, offset));
+		result = advanced_binary_recursive(array, mid + 1,
+						   value, offset);
+		if (result != -1)
+			return (result);
+
+		return ((int)(offset + mid));
 	}
 
 	if (array[mid] > value)
