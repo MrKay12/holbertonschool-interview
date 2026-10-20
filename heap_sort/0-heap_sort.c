@@ -2,9 +2,9 @@
 #include "sort.h"
 
 /**
- * sift_down - Moves an element down to restore the max heap property
+ * sift_down - Restores the max heap property
  * @array: Array to sort
- * @size: Size of the heap
+ * @size: Size of the active heap
  * @root: Index of the root element
  */
 void sift_down(int *array, size_t size, size_t root)
@@ -43,7 +43,7 @@ void heap_sort(int *array, size_t size)
 	size_t i;
 	int temp;
 
-	if (!array || size < 2)
+	if (array == NULL || size < 2)
 		return;
 
 	i = size / 2;
