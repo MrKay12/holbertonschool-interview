@@ -4,23 +4,25 @@
 /**
  * sift_down - Restores the max heap property
  * @array: Array to sort
- * @size: Size of the active heap
+ * @heap_size: Size of the active heap
+ * @total_size: Total size of the array
  * @root: Index of the root element
  */
-void sift_down(int *array, size_t size, size_t root)
+void sift_down(int *array, size_t heap_size, size_t total_size,
+	       size_t root)
 {
 	size_t largest, left, right;
 	int temp;
 
-	while (root < size / 2)
+	while (root < heap_size / 2)
 	{
 		left = 2 * root + 1;
 		right = left + 1;
 		largest = root;
 
-		if (left < size && array[left] > array[largest])
+		if (left < heap_size && array[left] > array[largest])
 			largest = left;
-		if (right < size && array[right] > array[largest])
+		if (right < heap_size && array[right] > array[largest])
 			largest = right;
 		if (largest == root)
 			break;
@@ -28,7 +30,7 @@ void sift_down(int *array, size_t size, size_t root)
 		temp = array[root];
 		array[root] = array[largest];
 		array[largest] = temp;
-		print_array(array, size);
+		print_array(array, total_size);
 		root = largest;
 	}
 }
@@ -50,7 +52,7 @@ void heap_sort(int *array, size_t size)
 	while (i > 0)
 	{
 		i--;
-		sift_down(array, size, i);
+		sift_down(array, size, size, i);
 	}
 
 	i = size;
@@ -61,6 +63,6 @@ void heap_sort(int *array, size_t size)
 		array[0] = array[i];
 		array[i] = temp;
 		print_array(array, size);
-		sift_down(array, i, 0);
+		sift_down(array, i, size, 0);
 	}
 }
